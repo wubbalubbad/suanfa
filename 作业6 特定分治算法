@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+int exchange(int *a, int i, int j){
+	int temp = a[i];
+	a[i] = a[j];
+	a[j] = temp;
+}
+int partition(int *a, int p, int r){
+	int x = a[r];
+	int i = p-1, j;
+	for(j = p; j < r; j++){
+		if(a[j] < x){
+			i++;
+			exchange(a, i, j);	//交换下标为 i和 j 两个数的位置  
+		}
+	}
+	exchange(a, i+1, r);	 
+
+	return i+1;
+}
+int quick_sort(int *a, int p, int r, int k, int *find)
+{
+	if(p < r){
+		int x_index = partition(a, p, r); //获取主元素下标	
+		printf("主元素下标x_index=%d\n", x_index);
+
+		if(k == x_index){
+			*find = 1;
+			printf("find number k = %d\n", a[x_index]);
+			return 0;
+		}
+		else if(k < x_index){
+			quick_sort(a, p, x_index-1, k, find);
+		}
+		else if(k > x_index){
+			quick_sort(a, x_index+1, r, k, find);
+		}
+	} 
+}
+
+ int main()
+ {
+ 	int find = -1, k;
+ 	printf("请输入k值");				 
+	scanf("%d", &k); 
+	k = k -1;		//因为数组下标是从0开始算的，这里需要对应地做点调整
+ 	int a[] = {0,9,7,5,3,6,1};  //试验数组 
+ 	
+ 	quick_sort(a, 0, 6, k, &find);	
+
+
+ 	if(find == -1){	  //find为-1说明没有在quick_sort没有找到 k 元素					
+ 		printf("find number k = %d\n", a[k]);
+	 }
+	 
+ }
