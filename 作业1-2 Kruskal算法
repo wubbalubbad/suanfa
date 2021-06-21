@@ -1,0 +1,109 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+const int MAX_VERTEX_NUM = 10;
+
+struct Edge {
+  Edge(int vertex1 = 0, int vertex2 = 0, int weight = 0) {
+    this->vertex1 = vertex1;
+    this->vertex2 = vertex2;
+    this->weight  = weight;
+  }
+  int vertex1, vertex2, weight;
+};
+
+bool operator<(const Edge& e1, const Edge& e2) {
+  return e1.weight < e2.weight;
+}
+
+class MergeQuery {
+public:
+  MergeQuery(const int& vertexNum): vertexNum(vertexNum) {
+    component = new int[vertexNum];
+    for (int i = 0; i < vertexNum; ++i) {
+      component[i] = i;
+    }
+  }
+  ~MergeQuery() {
+    if (component != NULL)
+      delete [] component;
+  }
+  int query(const int& vertex) const { return component[vertex]; }
+  void merge(int A, int B) {
+    for (int i = 0; i < vertexNum; ++i) {
+      if (component[i] == B)
+        component[i] = A;
+    }
+  }
+private:
+  int vertexNum;
+  int* component;
+};
+
+class Kruskal {
+public:
+  Kruskal(const int& vertexNum, const int& edgeNum) {
+    this->vertexNum = vertexNum;
+    this->edgeNum   = edgeNum;
+    mq = new MergeQuery(vertexNum);
+    edges = new Edge[edgeNum];
+    minimalSpanningTree = new int[vertexNum-1];
+  }
+  ~Kruskal() {
+    if (mq != NULL)
+      delete mq;
+    if (edges != NULL)
+      delete [] edges;
+  }
+  void getEdge() {
+    for (int i = 0; i < edgeNum; ++i) {
+      cin >> edges[i].vertex1 >> edges[i].vertex2 >> edges[i].weight;
+    }
+  }
+  void minimalSpanning() {
+    sort(edges, edges + edgeNum);
+    int treeEdgeNum = 0;
+    for (int i = 0; i < edgeNum; ++i) {
+      int A = mq->query(edges[i].vertex1);
+      int B = mq->query(edges[i].vertex2);
+      if (A != B) {
+        mq->merge(A, B);
+        minimalSpanningTree[treeEdgeNum++] = i;
+      }
+    }
+  }
+  void getTree() {
+    int weightSum = 0;
+    cout << "最小生成树: (v1, v2, 权值)" << endl;
+    for (int i = 0; i < vertexNum-1; ++i) {
+      weightSum += edges[minimalSpanningTree[i]].weight;
+      cout << edges[minimalSpanningTree[i]].vertex1 << ' '
+           << edges[minimalSpanningTree[i]].vertex2 << ' '
+           << edges[minimalSpanningTree[i]].weight << endl;
+    }
+    cout << "最小生成树边权值总和为: " << weightSum << endl;
+  }
+private:
+  int vertexNum;
+  int edgeNum;
+  int* minimalSpanningTree;
+  MergeQuery* mq;
+  Edge* edges;
+};
+
+int main() {
+  int vertexNum, edgeNum;
+  cin >> vertexNum >> edgeNum;
+  if (vertexNum > MAX_VERTEX_NUM) {
+    cout << "结点数量过多" << endl;
+    return -1;
+  }
+
+  Kruskal k(vertexNum, edgeNum);
+  k.getEdge(); // 输入图的所有边
+  k.minimalSpanning(); // kruskal最小生成树算法
+  k.getTree(); // 输出结果
+
+  return 0;
+}
