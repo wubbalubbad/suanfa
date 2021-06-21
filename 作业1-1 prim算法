@@ -1,0 +1,78 @@
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+using namespace std;
+const int inf=999999;
+ 
+int map[110][110];//创建map二维数组储存图表
+int dis[110];//dis数组记录每2个点间最小权值
+int vis[100];//visited数组标记某点是否已访问
+int sum;//代表所求的权值之和
+ 
+void prim(int n)
+{
+    int i,j;
+    int pos;
+    memset(vis,0,sizeof(vis));
+    for(i=1; i<=n; i++)
+    {
+        dis[i]=map[1][i];//第一次给dis数组赋值
+    }
+    vis[1]=1;//从某点开始，分别标记和记录该点
+    for(i=1; i<n; i++) //再运行n-1次,剩下的n-1个点
+    {
+        //找出最小权值并记录位置
+        int min=inf;
+        for(j=1; j<=n; j++)
+        {
+            if(!vis[j] && dis[j]<min)
+            {
+                min=dis[j];
+                pos=j;
+            }
+        }
+        if(min>=inf) break;
+        //最小权值累加
+        sum+=min;
+        vis[pos]=1;//标记该点
+        for(j=1; j<=n; j++)
+        {
+            if(!vis[j] && map[pos][j]<dis[j])//更新权值
+            {
+                dis[j]=map[pos][j];
+            }
+        }
+    }
+}
+int main()
+{
+    int n,m;
+    int i,j;
+    int a,b,c;//a、b为点，c为两点权值 
+    while(~scanf("%d %d",&n,&m)!=EOF)//循环输入数据n和m的值,n为点数量，m为边数 
+    {
+        sum=0;
+        for(i=1; i<=n; i++)
+        {
+            for(j=1; j<=n; j++)
+            {
+                map[i][j]=inf;//所有权值初始化为最大,代表图上的点没有连线
+            }
+            map[i][i]=0;//自身到自身的距离权值为0
+        }
+        for(i=1; i<=m; i++)
+        {
+            scanf("%d %d %d",&a,&b,&c);//更新点与点之间的权值 
+            if(map[a][b]>c)
+                map[a][b]=map[b][a]=c;
+        }
+        prim(n);
+        printf("%d\n",sum);
+    }
+    return 0;
+}
+
+
+
