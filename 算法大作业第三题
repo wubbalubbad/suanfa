@@ -54,7 +54,10 @@ int cal_distance(string source, string target)
 int main()
 {
 	string source,target;
-	cin>>source>>target;
+	cout<<"输入源串:"<<endl; 
+	cin>>source;
+	cout<<"输入目标串:"<<endl; 
+	cin>>target;
 	int steps=cal_distance(source,target);
 	cout<<steps;
 	return 0;
