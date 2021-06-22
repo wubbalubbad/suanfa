@@ -1,0 +1,61 @@
+
+#include<iostream>
+#include<string>
+using namespace std;
+int cal_distance(string source, string target)
+{
+	if(source.size()==0)
+		return target.size();
+	if (target.size()==0)
+		return source.size();
+	int len_src=source.size();
+	int len_trg=target.size();
+	int **f;
+	f=new int*[len_src+1];
+	for (int i=0;i<=len_src;i++)
+	{
+		f[i]=new int [len_trg+1];
+	}
+
+	
+	for (int i=0;i<len_src+1;++i) 
+		f[i][0]=i;				
+	for (int i=0;i<len_trg+1;++i) 
+		f[0][i]=i;				
+	int temp = 0;
+	for (int j=0;j<len_trg;++j)	
+	{
+		
+		for (int i=0;i<len_src;++i)	
+		{
+			
+			if(source[i]==target[j])//相等
+				f[i+1][j+1]=f[i][j];
+			else
+			{
+				temp = min(f[i][j]+1,f[i][j+1]+1);
+				f[i+1][j+1]=min(f[i+1][j]+1,temp);
+				//f[i][j]+1：如果前面f[i][j]是最快的，那么前面的字符不要再动了，现在把第i+1个字符替换成第j+1字符，在给定位置上插入一个字符
+				//f[i][j+1]+1：如果前面f[i][j+1]是最快的，那么第i+1个字符是多余的，需要继续保持f[i][j+1]的现状，应该把第i+1个字符删除掉
+				//f[i+1][j]+1：如果前面f[i+1][j]是最快的，那么还缺少第j+1个字符，应该插入第j+1个字符
+			}
+	
+		}
+	}
+	int steps=f[len_src][len_trg];
+	for (int i=0;i<=len_src;i++)
+	{
+		delete[]f[i];
+	}
+	delete[]f;
+	return steps;
+ 
+}
+int main()
+{
+	string source,target;
+	cin>>source>>target;
+	int steps=cal_distance(source,target);
+	cout<<steps;
+	return 0;
+}
